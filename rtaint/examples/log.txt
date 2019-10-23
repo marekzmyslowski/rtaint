@@ -1,0 +1,136 @@
+==16875== Taintgrind, the taint analysis tool
+==16875== Copyright (C) 2010-2018, and GNU GPL'd, by Wei Ming Khoo.
+==16875== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==16875== Command: ./avBranch.test ./avBranch_T.input
+==16875== 
+0xFFFFFFFF: _syscall_read | Read:55 | 0x0 | 422a490_unknownobj 
+0x4CB916E: _IO_file_underflow (in /lib/x86_64-linux-gnu/libc-2.27.so) | movzx eax, byte ptr [rax] | Load:1 | 0x58 | t22_10323 <- 422a490_unknownobj
+0x4CB916E: _IO_file_underflow (in /lib/x86_64-linux-gnu/libc-2.27.so) | t21_11790 <- t22_10323
+0x4CB916E: _IO_file_underflow (in /lib/x86_64-linux-gnu/libc-2.27.so) | t20_12749 <- t21_11790
+0x4CB916E: _IO_file_underflow (in /lib/x86_64-linux-gnu/libc-2.27.so) | r2_12453 <- t20_12749
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t4_15443 <- r2_12453
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t14_22042 <- t4_15443
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t3_17758 <- t14_22042
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t15_22324 <- t3_17758
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t5_16268 <- t15_22324
+0x4CB7748: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | r19_40687 <- t5_16268
+0x4CB774B: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | t19_11983 <- t5_16268
+0x4DBAAE3: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | vmovdqu ymm0, ymmword ptr [rsi] | Load:32 | na | t0_10581 <- 422a490_unknownobj
+0x4DBAAE3: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | r28_879 <- t0_10581
+0x4DBAAE7: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | vmovdqu ymm1, ymmword ptr [rsi + rdx - 0x20] | Load:32 | na | t2_21473 <- 422a4a7_unknownobj
+0x4DBAAE7: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | r32_647 <- t2_21473
+0x4DBAAED: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | vmovdqu ymmword ptr [rdi], ymm0 | Store:32 | na | 1ffefffc00_unknownobj <- t0_10581
+0x4DBAAF1: ??? (in /lib/x86_64-linux-gnu/libc-2.27.so) | vmovdqu ymmword ptr [rdi + rdx - 0x20], ymm1 | Store:32 | na | 1ffefffc17_unknownobj <- t2_21473
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x10] | Load:1 | 0x41 | t41_3428 <- 1ffefffc10_unknownobj
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t51_1979 <- t41_3428
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t40_3709 <- t51_1979
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t52_1616 <- t40_3709
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t39_5097 <- t52_1616
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12789 <- t39_5097
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t13_21598 <- r2_12789
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t53_1824 <- t13_21598
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t42_3240 <- t53_1824
+0x108931: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41475 <- t42_3240
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t57_1295 <- t42_3240
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | CmpEQ8 | 0x1 | t55_1731 <- t57_1295
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t54_1778 <- t55_1731
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t49_2654 <- t54_1778
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t58_1246 <- t49_2654
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t44_3214 <- t58_1246
+0x108937: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | jne 0x10895d | IfGoto | 0x1 | t44_3214
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x11] | Load:1 | 0x56 | t12_25083 <- 1ffefffc11_unknownobj
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t22_10552 <- t12_25083
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t11_24751 <- t22_10552
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t23_18167 <- t11_24751
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t10_25217 <- t23_18167
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12790 <- t10_25217
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t2_21932 <- r2_12790
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t24_8947 <- t2_21932
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t13_21599 <- t24_8947
+0x10893D: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41476 <- t13_21599
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t28_12728 <- t13_21599
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | CmpEQ8 | 0x1 | t26_13201 <- t28_12728
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t25_13443 <- t26_13201
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t20_13101 <- t25_13443
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t29_11152 <- t20_13101
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t15_22738 <- t29_11152
+0x108943: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | jne 0x10895d | IfGoto | 0x1 | t15_22738
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x12] | Load:1 | 0x42 | t12_25084 <- 1ffefffc12_unknownobj
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t22_10553 <- t12_25084
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t11_24752 <- t22_10553
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t23_18168 <- t11_24752
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t10_25218 <- t23_18168
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12791 <- t10_25218
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t2_21933 <- r2_12791
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t24_8948 <- t2_21933
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t13_21600 <- t24_8948
+0x108949: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41477 <- t13_21600
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t28_12729 <- t13_21600
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | CmpEQ8 | 0x1 | t26_13202 <- t28_12729
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t25_13444 <- t26_13202
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t20_13102 <- t25_13444
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t29_11153 <- t20_13102
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t15_22739 <- t29_11153
+0x10894F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | jne 0x10895d | IfGoto | 0x1 | t15_22739
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x13] | Load:1 | 0x52 | t12_25085 <- 1ffefffc13_unknownobj
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t22_10554 <- t12_25085
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t11_24753 <- t22_10554
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t23_18169 <- t11_24753
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t10_25219 <- t23_18169
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12792 <- t10_25219
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t2_21934 <- r2_12792
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t24_8949 <- t2_21934
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t13_21601 <- t24_8949
+0x108955: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41478 <- t13_21601
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t28_12730 <- t13_21601
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | CmpEQ8 | 0x1 | t26_13203 <- t28_12730
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t25_13445 <- t26_13203
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t20_13103 <- t25_13445
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t29_11154 <- t20_13103
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t15_22740 <- t29_11154
+0x10895B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | je 0x10896b | IfGoto | 0x1 | t15_22740
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x14] | Load:1 | 0x78 | t12_25086 <- 1ffefffc14_unknownobj
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t21_12085 <- t12_25086
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t11_24754 <- t21_12085
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t22_10555 <- t11_24754
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t10_25220 <- t22_10555
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12793 <- t10_25220
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t4_15847 <- r2_12793
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t23_18170 <- t4_15847
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t13_21602 <- t23_18170
+0x10896F: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41479 <- t13_21602
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | Shr64 | 0x0 | t25_13446 <- t13_21602
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | And64 | 0x0 | t24_8950 <- t25_13446
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t19_12320 <- t24_8950
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t26_13204 <- t19_12320
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t14_22459 <- t26_13204
+0x108975: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | js 0x10898f | IfGoto | 0x0 | t14_22459
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | movzx eax, byte ptr [rax + 0x15] | Load:1 | 0x78 | t17_15724 <- 1ffefffc15_unknownobj
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t16_19788 <- t17_15724
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t15_22741 <- t16_19788
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r2_12794 <- t15_22741
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t20_13104 <- r2_12794
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t19_12321 <- t20_13104
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t18_17099 <- t19_12321
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t21_12086 <- t18_17099
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | Sub32 | 0xffffff78 | t4_15848 <- t21_12086
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t23_18171 <- t21_12086
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r19_41480 <- t23_18171
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t25_13447 <- t4_15848
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t27_12009 <- t25_13447
+0x10897B: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | t26_13205 <- t27_12009
+0x108989: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | mov qword ptr [rbp - 0x10], rax | Store:8 | 0xffffff78 | 1ffefffbd0_unknownobj <- t26_13205
+0x108998: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | mov rdx, qword ptr [rbp - 0x10] | Load:8 | 0xffffff78 | t34_7065 <- 1ffefffbd0_unknownobj
+0x108998: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | r4_8593 <- t34_7065
+0x1089A1: test_avBranch (in /work/taint/fuzzer-test-crashes/avBranch.test) | JMP t34 |  Jmp | 0xffffff78 | t34_7065
+==16875== 
+==16875== Process terminating with default action of signal 11 (SIGSEGV)
+==16875==  Access not within mapped region at address 0xFFFFFF78
+==16875==    at 0xFFFFFF78: ???
+==16875==    by 0x108A46: main (in /work/taint/fuzzer-test-crashes/avBranch.test)
+==16875==  If you believe this happened as a result of a stack
+==16875==  overflow in your program's main thread (unlikely but
+==16875==  possible), you can try to increase the size of the
+==16875==  main thread stack using the --main-stacksize= flag.
+==16875==  The main thread stack size used in this run was 8388608.
+==16875== 
