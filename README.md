@@ -14,6 +14,11 @@ rtaint is a python package. To install execute following command:
 ```
 python3 setup.py install
 ```
+#### Using Dockerfile
+To build docker image use simple command:
+```
+docker build . -t rtaint
+```
 
 #### Creating Taint Log
 The following info is required:
