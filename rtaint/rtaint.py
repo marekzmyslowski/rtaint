@@ -100,7 +100,7 @@ def parse_line(line):
     return addr, insn, insnty, val, flow
 
 
-def print_results(taint_dict):
+def print_results(taint_dict, kaitai_dir):
     """
     The function prints the result from taint dictionary. It contains the tuples [offset, size].
     The tuples can be duplicated. Also the function compacts data.
@@ -134,13 +134,17 @@ def print_results(taint_dict):
 
     kaitai += "  taint" + str(index) + ":\n    pos: " + hex(current_offset) + "\n    size: " + str(current_size) + "\n"
 
-    logger.info("------ kaitai struct - CUT HERE -------\n\n {}".format(kaitai))
+    logger.info("------ Kaitai Struct - CUT HERE -------\n\n {}".format(kaitai))
     logger.info("-------------- END --------------------")
 
     hash_object = hashlib.sha512(kaitai.encode())
     hex_dig = hash_object.hexdigest()
 
-    logger.info("Kaitai struct SHA512: {}".format(hex_dig))
+    logger.info("Kaitai Struct SHA512: {}".format(hex_dig))
+    if kaitai_dir:
+        kaitai_filename = kaitai_dir + hex_dig + ".ksy"
+        with open(kaitai_filename, "w+") as kaitai_file:
+            kaitai_file.write(kaitai)
 
 
 def add_new_taint(file_taints, taint):
@@ -212,7 +216,7 @@ def print_graph(nodes, edges, graph_file_name):
         graph_file.write("}")
 
 
-def run(log_file, graph_file_name, slice_file):
+def run(log_file, graph_file_name, slice_file, kaitai_dir):
     # Currently processed state
     current_states = []
     # State that will be process in the next iteration
@@ -372,7 +376,7 @@ def run(log_file, graph_file_name, slice_file):
         # logging.debug(next_states)
         next_states.clear()
 
-    print_results(file_taints)
+    print_results(file_taints, kaitai_dir)
     print_graph(nodes, edges, graph_file_name)
 
 
@@ -384,6 +388,8 @@ def main():
                         help='File name to store dot graph')
     parser.add_argument('-s', type=str, required=False,
                         help="File name for the slice")
+    parser.add_argument('-k', type=str, required=False,
+                        help="Directory path where Kaitai Struct will be stored inside the file $SHA512.ksy ")
     args = parser.parse_args(sys.argv[1:])
 
     print_info()
@@ -393,9 +399,9 @@ def main():
             with FileReadBackwards(args.f, encoding="utf-8") as log_file:
                 if args.s:
                     with open(args.s, "w") as slice_file:
-                        run(log_file, args.g, slice_file)
+                        run(log_file, args.g, slice_file, args.k)
                 else:
-                    run(log_file, args.g, None)
+                    run(log_file, args.g, None, args.k)
         except KeyboardInterrupt:
             print('+ Interrupted')
             sys.exit(0)
