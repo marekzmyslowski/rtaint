@@ -203,6 +203,8 @@ def print_binary_map(taint_dict, binary_map_and_size):
     :return: None
     """
     assert taint_dict
+    if not binary_map_and_size:
+        return
 
     [file_name, size] = binary_map_and_size.split(':')
     if int(size) < 0:
