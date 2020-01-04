@@ -21,8 +21,10 @@
 import argparse
 import hashlib
 import sys
+import copy
 
 from file_read_backwards import FileReadBackwards
+from bitstring import BitArray
 
 from .log import logger
 from .version import __version__
@@ -100,53 +102,6 @@ def parse_line(line):
     return addr, insn, insnty, val, flow
 
 
-def print_results(taint_dict, kaitai_dir):
-    """
-    The function prints the result from taint dictionary. It contains the tuples [offset, size].
-    The tuples can be duplicated. Also the function compacts data.
-    :param taint_dict: Taint dictionary
-    :return: None
-    """
-    assert taint_dict
-
-    kaitai = "meta:\n  id: taint\ninstances:\n"
-    index = 0
-
-    sorted_offsets = sorted(taint_dict)
-
-    current_offset = sorted_offsets.pop(0)
-    current_size = taint_dict.pop(current_offset)
-
-    for key in sorted_offsets:
-        if key > current_offset + current_size:
-            logger.info("Offset: {} Size: {}".format(str(current_offset), str(current_size)))
-
-            kaitai += "  taint" + str(index) + ":\n    pos: " + hex(current_offset) + "\n    size: " + str(
-                current_size) + "\n"
-
-            index += 1
-            current_offset, current_size = key, taint_dict[key]
-        elif key >= current_offset and \
-                (key + taint_dict[key] > current_offset + current_size):
-            current_size = key + taint_dict[key] - current_offset
-
-    logger.info("Offset: {} Size: {}".format(str(current_offset), str(current_size)))
-
-    kaitai += "  taint" + str(index) + ":\n    pos: " + hex(current_offset) + "\n    size: " + str(current_size) + "\n"
-
-    logger.info("------ Kaitai Struct - CUT HERE -------\n\n {}".format(kaitai))
-    logger.info("-------------- END --------------------")
-
-    hash_object = hashlib.sha512(kaitai.encode())
-    hex_dig = hash_object.hexdigest()
-
-    logger.info("Kaitai Struct SHA512: {}".format(hex_dig))
-    if kaitai_dir:
-        kaitai_filename = kaitai_dir + hex_dig + ".ksy"
-        with open(kaitai_filename, "w+") as kaitai_file:
-            kaitai_file.write(kaitai)
-
-
 def add_new_taint(file_taints, taint):
     """
     The function add tuple to the taint dictionary.
@@ -184,11 +139,84 @@ def add_new_state(states, var_name, var_address, taint_size, taint_offset):
 def add_new_slice(slice_file, line):
     """
     The function add new line to the slice file.
-
     :param line: Line to be added
     :return: None
     """
     slice_file.write(line)
+
+
+def print_kaitai(taint_dict, kaitai_dir):
+    """
+    The function prints the result from taint dictionary. It contains the tuples [offset, size].
+    The tuples can be duplicated. Also the function compacts data.
+    :param taint_dict: Taint dictionary
+    :param kaitai_dir: Directory when the file will be stored
+    :return: None
+    """
+    assert taint_dict
+
+    local_taint_dict = copy.deepcopy(taint_dict)
+    kaitai = "meta:\n  id: taint\ninstances:\n"
+    index = 0
+
+    sorted_offsets = sorted(local_taint_dict)
+
+    current_offset = sorted_offsets.pop(0)
+    current_size = local_taint_dict.pop(current_offset)
+
+    for key in sorted_offsets:
+        if key > current_offset + current_size:
+            logger.info("Offset: {} Size: {}".format(str(current_offset), str(current_size)))
+
+            kaitai += "  taint" + str(index) + ":\n    pos: " + hex(current_offset) + "\n    size: " + str(
+                current_size) + "\n"
+
+            index += 1
+            current_offset, current_size = key, local_taint_dict[key]
+        elif key >= current_offset and \
+                (key + local_taint_dict[key] > current_offset + current_size):
+            current_size = key + local_taint_dict[key] - current_offset
+
+    logger.info("Offset: {} Size: {}".format(str(current_offset), str(current_size)))
+
+    kaitai += "  taint" + str(index) + ":\n    pos: " + hex(current_offset) + "\n    size: " + str(current_size) + "\n"
+
+    logger.info("------ Kaitai Struct - CUT HERE -------\n\n {}".format(kaitai))
+    logger.info("-------------- END --------------------")
+
+    hash_object = hashlib.sha512(kaitai.encode())
+    hex_dig = hash_object.hexdigest()
+
+    logger.info("Kaitai Struct SHA512: {}".format(hex_dig))
+    if kaitai_dir:
+        kaitai_filename = kaitai_dir + hex_dig + ".ksy"
+        with open(kaitai_filename, "w+") as kaitai_file:
+            kaitai_file.write(kaitai)
+
+
+def print_binary_map(taint_dict, binary_map_and_size):
+    """
+    The function creates and saves the binary map of bytes that are tainted from the source.
+    The bit[x] means that byte[x] from input file is tainted.
+    :param taint_dict: Taint dictionary
+    :param binary_map_and_size: Binary file and size - name:size
+    :return: None
+    """
+    assert taint_dict
+
+    [file_name, size] = binary_map_and_size.split(':')
+    if int(size) < 0:
+        logger.warinig("The size value is negative")
+        return
+    map = BitArray(int(size))
+    map.set(0)
+
+    for key in taint_dict:
+        for value in range(taint_dict[key]):
+            map.set(1, key+value)
+
+    with open(file_name, "wb") as binary_map:
+        map.tofile(binary_map)
 
 
 def print_graph(nodes, edges, graph_file_name):
@@ -216,7 +244,7 @@ def print_graph(nodes, edges, graph_file_name):
         graph_file.write("}")
 
 
-def run(log_file, graph_file_name, slice_file, kaitai_dir):
+def run(log_file, graph_file_name, slice_file, kaitai_dir, binary_map_and_size):
     # Currently processed state
     current_states = []
     # State that will be process in the next iteration
@@ -376,20 +404,23 @@ def run(log_file, graph_file_name, slice_file, kaitai_dir):
         # logging.debug(next_states)
         next_states.clear()
 
-    print_results(file_taints, kaitai_dir)
+    print_kaitai(file_taints, kaitai_dir)
+    print_binary_map(file_taints, binary_map_and_size)
     print_graph(nodes, edges, graph_file_name)
 
 
 def main():
     parser = argparse.ArgumentParser(prog='rtaint.py')
     parser.add_argument('-f', type=str, required=True,
-                        help='Log file from taintgrind')
+                        help='Log file from Taintgrind')
     parser.add_argument('-g', type=str, required=False,
                         help='File name to store dot graph')
     parser.add_argument('-s', type=str, required=False,
                         help="File name for the slice")
     parser.add_argument('-k', type=str, required=False,
                         help="Directory path where Kaitai Struct will be stored inside the file $SHA512.ksy ")
+    parser.add_argument('-b', type=str, required=False,
+                        help="File name for the binary map and size separated by colon - name:size")
     args = parser.parse_args(sys.argv[1:])
 
     print_info()
@@ -399,9 +430,9 @@ def main():
             with FileReadBackwards(args.f, encoding="utf-8") as log_file:
                 if args.s:
                     with open(args.s, "w") as slice_file:
-                        run(log_file, args.g, slice_file, args.k)
+                        run(log_file, args.g, slice_file, args.k, args.b)
                 else:
-                    run(log_file, args.g, None, args.k)
+                    run(log_file, args.g, None, args.k, args.b)
         except KeyboardInterrupt:
             print('+ Interrupted')
             sys.exit(0)
