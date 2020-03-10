@@ -39,7 +39,7 @@ logo = '''
     $$ |  $$ |$$$$$$$$/   $$ $$/  $$$$$$$$/ $$ |       $$$$$$  |$$$$$$$$/          $$ |/$$$$$$$ |$$ |$$ |  $$ |  $$ |/  |
     $$ |  $$ |$$       |   $$$/   $$       |$$ |      /     $$/ $$       |         $$ |$$    $$ |$$ |$$ |  $$ |  $$  $$/ 
     $$/   $$/  $$$$$$$/     $/     $$$$$$$/ $$/       $$$$$$$/   $$$$$$$/          $$/  $$$$$$$/ $$/ $$/   $$/    $$$$/  
-   
+
     Version %s    
     ''' % __version__
 
@@ -215,7 +215,7 @@ def print_binary_map(taint_dict, binary_map_and_size):
 
     for key in taint_dict:
         for value in range(taint_dict[key]):
-            map.set(1, key+value)
+            map.set(1, key + value)
 
     with open(file_name, "wb") as binary_map:
         map.tofile(binary_map)
@@ -246,7 +246,7 @@ def print_graph(nodes, edges, graph_file_name):
         graph_file.write("}")
 
 
-def run(log_file, graph_file_name, slice_file, kaitai_dir, binary_map_and_size):
+def run(log_file, graph_file_name, slice_file, kaitai_dir, binary_map_and_size, variable):
     # Currently processed state
     current_states = []
     # State that will be process in the next iteration
@@ -261,8 +261,18 @@ def run(log_file, graph_file_name, slice_file, kaitai_dir, binary_map_and_size):
     line = get_next_line(log_file)
     addr, insn, insnty, val, flow = parse_line(line)
 
+    if variable:
+        sink = flow.split(" <- ")
+        while variable not in sink[0]:
+            line = get_next_line(log_file)
+            addr, insn, insnty, val, flow = parse_line(line)
+            sink = flow.split(" <- ")
+
     if insn:
-        logger.info("The crashing instruction reason: {}".format(insn))
+        if variable:
+            logger.info("The tainted instruction: {}".format(insn))
+        else:
+            logger.info("The crashing instruction reason: {}".format(insn))
 
     # Identify the value to taint
     if " <- " in flow:
@@ -284,7 +294,7 @@ def run(log_file, graph_file_name, slice_file, kaitai_dir, binary_map_and_size):
         current_states.append([sources, follow_address, -1, 0])
 
     # FIXME: first, I'm assuming that the sources is crash reason. This needs to be changed depends on the instrcution type
-    logger.info("Tainting the value: {}".format(sources))
+    logger.info("Tainting the value: {}".format(variable if variable else sources))
 
     if slice_file:
         add_new_slice(slice_file, line)
@@ -419,6 +429,8 @@ def main():
                         help='File name to store dot graph')
     parser.add_argument('-s', type=str, required=False,
                         help="File name for the slice")
+    parser.add_argument('-v', type=str, required=False,
+                        help="Variable name")
     parser.add_argument('-k', type=str, required=False,
                         help="Directory path where Kaitai Struct will be stored inside the file $SHA512.ksy ")
     parser.add_argument('-b', type=str, required=False,
@@ -432,9 +444,9 @@ def main():
             with FileReadBackwards(args.f, encoding="utf-8") as log_file:
                 if args.s:
                     with open(args.s, "w") as slice_file:
-                        run(log_file, args.g, slice_file, args.k, args.b)
+                        run(log_file, args.g, slice_file, args.k, args.b, args.v)
                 else:
-                    run(log_file, args.g, None, args.k, args.b)
+                    run(log_file, args.g, None, args.k, args.b, args.v)
         except KeyboardInterrupt:
             print('+ Interrupted')
             sys.exit(0)
