@@ -1,4 +1,4 @@
-CC := clang
+CC := gcc
 
 all: avBranch
 .PHONE: all

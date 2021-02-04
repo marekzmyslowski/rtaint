@@ -23,7 +23,7 @@ RUN ./build_taintgrind.sh
 
 # Getting and installing rtaint tool
 WORKDIR /work
-RUN git clone https://github.com/Cycura/rtaint.git
+RUN git clone https://github.com/marekzmyslowski/rtaint.git
 WORKDIR /work/rtaint
 RUN python3 setup.py install
 RUN make -Q ./examples
