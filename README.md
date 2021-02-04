@@ -20,6 +20,7 @@ To build docker image use simple command:
 ```
 docker build . -t rtaint
 ```
+The number added to the docker file points the valgrind version available through this docker.
 
 #### Creating Taint Log
 The following info is required:
@@ -29,6 +30,10 @@ The following info is required:
 
 ```
 valgrind --tool=taintgrind --file-filter=/full/path/to/file/test_case --taint-start=0 --taint-len=test_case_size --compact=yes ./test_app test_case 2>log.txt
+```
+The directory "examples" contains the simple application that can be used to test the rtaint.
+```
+valgrind --tool=taintgrind --file-filter=/full/path/to/file/crash.input --taint-start=0 --taint-len=25 --compact=yes ./avBranch crash.input 2>log.txt"
 ```
 
 #### Creating Reverse Taint
@@ -49,7 +54,7 @@ Here is an output example:
     $$ |  $$ |$$       |   $$$/   $$       |$$ |      /     $$/ $$       |         $$ |$$    $$ |$$ |$$ |  $$ |  $$  $$/ 
     $$/   $$/  $$$$$$$/     $/     $$$$$$$/ $$/       $$$$$$$/   $$$$$$$/          $$/  $$$$$$$/ $$/ $$/   $$/    $$$$/  
    
-    Version 0.20    
+    Version 0.30    
     
 The tainted instruction: movzx eax, byte ptr [rax + 0x15]
 Tainting the value: t17_15724

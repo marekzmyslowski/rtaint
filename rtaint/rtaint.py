@@ -71,7 +71,7 @@ def get_next_line(log_file):
     """
 
     while True:
-        line = log_file.readline()
+        line = re.sub(r'\x1B\[(([0-9]{1,2})?(;)?([0-9]{1,2})?)?[m,K,H,f,J]','', log_file.readline())
 
         if not line:
             return None
