@@ -22,6 +22,7 @@ import argparse
 import hashlib
 import sys
 import copy
+import re
 
 from file_read_backwards import FileReadBackwards
 from bitstring import BitArray
